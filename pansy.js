@@ -6,6 +6,8 @@ const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerH
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setClearColor(0x87CEEB, 1);
+renderer.setPixelRatio(window.devicePixelRatio); // Better quality on high-DPI displays
+renderer.shadowMap.enabled = false; // Shadows disabled for performance but ready if needed
 document.getElementById('container').appendChild(renderer.domElement);
 
 // Lighting - realistic pansy lighting with PBR support
@@ -94,38 +96,46 @@ function createStem() {
 function createPansy() {
     const flowerGroup = new THREE.Group();
     
-    // Upper petal shape (rounded, wider at top - more realistic pansy shape)
+    // Upper petal shape (rounded, wider at top - more realistic pansy shape with waves)
     function createUpperPetalShape() {
         const shape = new THREE.Shape();
         shape.moveTo(0, 0);
-        // Top curves
-        shape.quadraticCurveTo(0.15, -0.15, 0.35, -0.35);
-        shape.quadraticCurveTo(0.5, -0.5, 0.55, -0.65);
-        shape.quadraticCurveTo(0.5, -0.75, 0.4, -0.8);
-        // Top center
-        shape.quadraticCurveTo(0.2, -0.85, 0, -0.85);
-        // Other side
-        shape.quadraticCurveTo(-0.2, -0.85, -0.4, -0.8);
-        shape.quadraticCurveTo(-0.5, -0.75, -0.55, -0.65);
-        shape.quadraticCurveTo(-0.5, -0.5, -0.35, -0.35);
-        shape.quadraticCurveTo(-0.15, -0.15, 0, 0);
+        // Top curves with slight waves for realism
+        shape.quadraticCurveTo(0.12, -0.12, 0.28, -0.28);
+        shape.quadraticCurveTo(0.38, -0.38, 0.48, -0.52);
+        shape.quadraticCurveTo(0.55, -0.62, 0.58, -0.72);
+        shape.quadraticCurveTo(0.56, -0.78, 0.48, -0.82);
+        shape.quadraticCurveTo(0.35, -0.84, 0.2, -0.86);
+        // Top center with slight indent
+        shape.quadraticCurveTo(0.1, -0.87, 0, -0.87);
+        // Other side with waves
+        shape.quadraticCurveTo(-0.1, -0.87, -0.2, -0.86);
+        shape.quadraticCurveTo(-0.35, -0.84, -0.48, -0.82);
+        shape.quadraticCurveTo(-0.56, -0.78, -0.58, -0.72);
+        shape.quadraticCurveTo(-0.55, -0.62, -0.48, -0.52);
+        shape.quadraticCurveTo(-0.38, -0.38, -0.28, -0.28);
+        shape.quadraticCurveTo(-0.12, -0.12, 0, 0);
         return shape;
     }
     
-    // Lower petal shape (largest, more rounded, wider)
+    // Lower petal shape (largest, more rounded, wider with natural waves)
     function createLowerPetalShape() {
         const shape = new THREE.Shape();
         shape.moveTo(0, 0);
-        // Wider, more rounded bottom petal
-        shape.quadraticCurveTo(0.25, 0.15, 0.5, 0.35);
-        shape.quadraticCurveTo(0.7, 0.6, 0.75, 0.85);
-        shape.quadraticCurveTo(0.7, 1.05, 0.5, 1.15);
-        shape.quadraticCurveTo(0.25, 1.2, 0, 1.2);
-        // Other side
-        shape.quadraticCurveTo(-0.25, 1.2, -0.5, 1.15);
-        shape.quadraticCurveTo(-0.7, 1.05, -0.75, 0.85);
-        shape.quadraticCurveTo(-0.7, 0.6, -0.5, 0.35);
-        shape.quadraticCurveTo(-0.25, 0.15, 0, 0);
+        // Wider, more rounded bottom petal with wavy edges
+        shape.quadraticCurveTo(0.22, 0.12, 0.42, 0.30);
+        shape.quadraticCurveTo(0.58, 0.48, 0.68, 0.68);
+        shape.quadraticCurveTo(0.74, 0.82, 0.78, 0.95);
+        shape.quadraticCurveTo(0.76, 1.08, 0.68, 1.16);
+        shape.quadraticCurveTo(0.52, 1.22, 0.35, 1.24);
+        shape.quadraticCurveTo(0.18, 1.25, 0, 1.25);
+        // Other side with matching waves
+        shape.quadraticCurveTo(-0.18, 1.25, -0.35, 1.24);
+        shape.quadraticCurveTo(-0.52, 1.22, -0.68, 1.16);
+        shape.quadraticCurveTo(-0.76, 1.08, -0.78, 0.95);
+        shape.quadraticCurveTo(-0.74, 0.82, -0.68, 0.68);
+        shape.quadraticCurveTo(-0.58, 0.48, -0.42, 0.30);
+        shape.quadraticCurveTo(-0.22, 0.12, 0, 0);
         return shape;
     }
     
@@ -145,12 +155,12 @@ function createPansy() {
     }
     
     const petalSettings = {
-        depth: 0.08,
+        depth: 0.1,
         bevelEnabled: true,
-        bevelThickness: 0.03,
-        bevelSize: 0.02,
-        steps: 3,
-        curveSegments: 32
+        bevelThickness: 0.035,
+        bevelSize: 0.025,
+        steps: 4,
+        curveSegments: 48 // More segments for smoother curves
     };
     
     // Upper two petals (overlapping)
