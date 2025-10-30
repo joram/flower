@@ -8,17 +8,25 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setClearColor(0x87CEEB, 1);
 document.getElementById('container').appendChild(renderer.domElement);
 
-// Lighting
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+// Lighting - more realistic pansy lighting
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
 scene.add(ambientLight);
 
-const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-directionalLight.position.set(5, 10, 5);
+// Main directional light (sun)
+const directionalLight = new THREE.DirectionalLight(0xffffff, 0.9);
+directionalLight.position.set(4, 8, 4);
+directionalLight.castShadow = false;
 scene.add(directionalLight);
 
-const pointLight = new THREE.PointLight(0xffffff, 0.5);
-pointLight.position.set(-5, 5, -5);
-scene.add(pointLight);
+// Fill light for softer shadows
+const fillLight = new THREE.DirectionalLight(0xffffff, 0.3);
+fillLight.position.set(-3, 5, -3);
+scene.add(fillLight);
+
+// Subtle rim light
+const rimLight = new THREE.PointLight(0xffffff, 0.4);
+rimLight.position.set(-2, 3, -2);
+scene.add(rimLight);
 
 // Color configuration - more vibrant pansy colors
 const colors = {
@@ -343,9 +351,9 @@ flowerPlant.add(leaves);
 
 scene.add(flowerPlant);
 
-// Camera position
-camera.position.set(3, 2, 5);
-camera.lookAt(0, 0, 0);
+// Camera position - better angle to view the pansy
+camera.position.set(2.5, 1.8, 4);
+camera.lookAt(0, 1, 0);
 
 // Animation loop
 function animate() {
@@ -354,8 +362,10 @@ function animate() {
     // Rotate the entire flower slowly (1 rotation per 120 seconds)
     flowerPlant.rotation.y += 0.005;
     
-    // Gentle swaying motion
-    flowerPlant.rotation.z = Math.sin(Date.now() * 0.001) * 0.05;
+    // Gentle swaying motion (more natural)
+    const time = Date.now() * 0.001;
+    flowerPlant.rotation.z = Math.sin(time * 0.5) * 0.04;
+    flowerPlant.rotation.x = Math.cos(time * 0.3) * 0.02;
     
     // Subtle petal movement
     pansy.children.forEach((child, index) => {
