@@ -66,29 +66,38 @@ function createStem() {
 function createPansy() {
     const flowerGroup = new THREE.Group();
     
-    // Upper petal shape (rounded, wider at top)
+    // Upper petal shape (rounded, wider at top - more realistic pansy shape)
     function createUpperPetalShape() {
         const shape = new THREE.Shape();
         shape.moveTo(0, 0);
-        shape.quadraticCurveTo(0.2, -0.1, 0.4, -0.3);
-        shape.quadraticCurveTo(0.5, -0.5, 0.5, -0.7);
-        shape.quadraticCurveTo(0.3, -0.8, 0, -0.9);
-        shape.quadraticCurveTo(-0.3, -0.8, -0.5, -0.7);
-        shape.quadraticCurveTo(-0.5, -0.5, -0.4, -0.3);
-        shape.quadraticCurveTo(-0.2, -0.1, 0, 0);
+        // Top curves
+        shape.quadraticCurveTo(0.15, -0.15, 0.35, -0.35);
+        shape.quadraticCurveTo(0.5, -0.5, 0.55, -0.65);
+        shape.quadraticCurveTo(0.5, -0.75, 0.4, -0.8);
+        // Top center
+        shape.quadraticCurveTo(0.2, -0.85, 0, -0.85);
+        // Other side
+        shape.quadraticCurveTo(-0.2, -0.85, -0.4, -0.8);
+        shape.quadraticCurveTo(-0.5, -0.75, -0.55, -0.65);
+        shape.quadraticCurveTo(-0.5, -0.5, -0.35, -0.35);
+        shape.quadraticCurveTo(-0.15, -0.15, 0, 0);
         return shape;
     }
     
-    // Lower petal shape (larger, more rounded)
+    // Lower petal shape (largest, more rounded, wider)
     function createLowerPetalShape() {
         const shape = new THREE.Shape();
         shape.moveTo(0, 0);
-        shape.quadraticCurveTo(0.3, 0.1, 0.6, 0.3);
-        shape.quadraticCurveTo(0.7, 0.6, 0.7, 0.9);
-        shape.quadraticCurveTo(0.4, 1.0, 0, 1.1);
-        shape.quadraticCurveTo(-0.4, 1.0, -0.7, 0.9);
-        shape.quadraticCurveTo(-0.7, 0.6, -0.6, 0.3);
-        shape.quadraticCurveTo(-0.3, 0.1, 0, 0);
+        // Wider, more rounded bottom petal
+        shape.quadraticCurveTo(0.25, 0.15, 0.5, 0.35);
+        shape.quadraticCurveTo(0.7, 0.6, 0.75, 0.85);
+        shape.quadraticCurveTo(0.7, 1.05, 0.5, 1.15);
+        shape.quadraticCurveTo(0.25, 1.2, 0, 1.2);
+        // Other side
+        shape.quadraticCurveTo(-0.25, 1.2, -0.5, 1.15);
+        shape.quadraticCurveTo(-0.7, 1.05, -0.75, 0.85);
+        shape.quadraticCurveTo(-0.7, 0.6, -0.5, 0.35);
+        shape.quadraticCurveTo(-0.25, 0.15, 0, 0);
         return shape;
     }
     
@@ -96,11 +105,14 @@ function createPansy() {
     function createLateralPetalShape() {
         const shape = new THREE.Shape();
         shape.moveTo(0, 0);
-        shape.quadraticCurveTo(0.4, 0.1, 0.6, 0.4);
-        shape.quadraticCurveTo(0.5, 0.7, 0.3, 0.8);
-        shape.quadraticCurveTo(0, 0.7, -0.3, 0.8);
-        shape.quadraticCurveTo(-0.5, 0.7, -0.6, 0.4);
-        shape.quadraticCurveTo(-0.4, 0.1, 0, 0);
+        // More elongated oval shape
+        shape.quadraticCurveTo(0.35, 0.05, 0.55, 0.3);
+        shape.quadraticCurveTo(0.6, 0.55, 0.5, 0.75);
+        shape.quadraticCurveTo(0.35, 0.85, 0.15, 0.8);
+        shape.quadraticCurveTo(0, 0.7, -0.15, 0.8);
+        shape.quadraticCurveTo(-0.35, 0.85, -0.5, 0.75);
+        shape.quadraticCurveTo(-0.6, 0.55, -0.55, 0.3);
+        shape.quadraticCurveTo(-0.35, 0.05, 0, 0);
         return shape;
     }
     
@@ -125,12 +137,12 @@ function createPansy() {
             opacity: 0.95
         })
     );
-    upperLeft.rotation.z = Math.PI / 4;
-    upperLeft.position.set(-0.3, 0.2, 0);
+    upperLeft.rotation.z = Math.PI / 3.5;
+    upperLeft.position.set(-0.25, 0.25, 0);
     upperLeft.rotation.y = Math.PI / 2;
     flowerGroup.add(upperLeft);
     
-    // Right upper petal
+    // Right upper petal (slightly overlapping)
     const upperRight = new THREE.Mesh(
         upperPetalGeometry.clone(),
         new THREE.MeshPhongMaterial({ 
@@ -140,8 +152,8 @@ function createPansy() {
             opacity: 0.95
         })
     );
-    upperRight.rotation.z = -Math.PI / 4;
-    upperRight.position.set(0.3, 0.2, 0);
+    upperRight.rotation.z = -Math.PI / 3.5;
+    upperRight.position.set(0.25, 0.25, 0);
     upperRight.rotation.y = Math.PI / 2;
     flowerGroup.add(upperRight);
     
@@ -159,8 +171,8 @@ function createPansy() {
             opacity: 0.95
         })
     );
-    lateralLeft.rotation.z = Math.PI / 2;
-    lateralLeft.position.set(-0.6, -0.1, 0);
+    lateralLeft.rotation.z = Math.PI / 2.2;
+    lateralLeft.position.set(-0.65, 0, 0);
     lateralLeft.rotation.y = Math.PI / 2;
     flowerGroup.add(lateralLeft);
     
@@ -174,8 +186,8 @@ function createPansy() {
             opacity: 0.95
         })
     );
-    lateralRight.rotation.z = -Math.PI / 2;
-    lateralRight.position.set(0.6, -0.1, 0);
+    lateralRight.rotation.z = -Math.PI / 2.2;
+    lateralRight.position.set(0.65, 0, 0);
     lateralRight.rotation.y = Math.PI / 2;
     flowerGroup.add(lateralRight);
     
@@ -193,33 +205,40 @@ function createPansy() {
     
     const lowerPetal = new THREE.Mesh(lowerPetalGeometry, lowerPetalMaterial);
     lowerPetal.rotation.z = Math.PI;
-    lowerPetal.position.set(0, -0.4, 0);
+    lowerPetal.position.set(0, -0.5, 0);
     lowerPetal.rotation.y = Math.PI / 2;
     flowerGroup.add(lowerPetal);
     
-    // Add face pattern using a smaller dark circle/ellipse overlay
-    const facePatternGeometry = new THREE.CircleGeometry(0.25, 16);
+    // Add face pattern using a dark ellipse overlay (more visible)
+    const facePatternGeometry = new THREE.EllipseCurve(0, 0, 0.3, 0.2, 0, Math.PI * 2, false, 0);
+    const facePatternShape = new THREE.Shape();
+    facePatternShape.ellipse(0, 0, 0.3, 0.2, 0, Math.PI * 2, false);
+    const facePatternExtrude = new THREE.ExtrudeGeometry(facePatternShape, {
+        depth: 0.01,
+        bevelEnabled: false
+    });
     const facePatternMaterial = new THREE.MeshPhongMaterial({ 
         color: colors.facePattern,
         transparent: true,
-        opacity: 0.7
+        opacity: 0.85
     });
-    const facePattern = new THREE.Mesh(facePatternGeometry, facePatternMaterial);
-    facePattern.position.set(0, -0.35, 0.06);
+    const facePattern = new THREE.Mesh(facePatternExtrude, facePatternMaterial);
+    facePattern.position.set(0, -0.45, 0.06);
     facePattern.rotation.y = Math.PI / 2;
     flowerGroup.add(facePattern);
     
-    // Add radiating lines for face pattern (simple lines)
-    for (let i = 0; i < 8; i++) {
-        const angle = (i / 8) * Math.PI * 2;
+    // Add radiating lines for face pattern (more visible)
+    for (let i = 0; i < 6; i++) {
+        const angle = (i / 6) * Math.PI * 2;
         const lineGeometry = new THREE.BufferGeometry().setFromPoints([
-            new THREE.Vector3(0, -0.35, 0.07),
-            new THREE.Vector3(Math.cos(angle) * 0.4, -0.35 + Math.sin(angle) * 0.2, 0.07)
+            new THREE.Vector3(0, -0.45, 0.08),
+            new THREE.Vector3(Math.cos(angle) * 0.5, -0.45 + Math.sin(angle) * 0.3, 0.08)
         ]);
         const lineMaterial = new THREE.LineBasicMaterial({ 
             color: colors.facePattern,
             transparent: true,
-            opacity: 0.5
+            opacity: 0.7,
+            linewidth: 2
         });
         const line = new THREE.Line(lineGeometry, lineMaterial);
         flowerGroup.add(line);
