@@ -466,27 +466,32 @@ window.applyColors = function() {
     colors.lowerPetal.setStyle(lowerColor);
     colors.facePattern.setStyle(faceColor);
     
-    // Update petal materials
-    pansy.children.forEach((child, index) => {
+    // Update petal materials - need to check each child properly
+    let petalIndex = 0;
+    pansy.children.forEach((child) => {
         if (child.type === 'Mesh' && child.material) {
-            // Upper petals (first two)
-            if (index < 2) {
+            // Upper petals (first two petals)
+            if (petalIndex < 2) {
                 child.material.color.setStyle(upperColor);
+                petalIndex++;
             }
             // Lateral petals (next two)
-            else if (index < 4) {
+            else if (petalIndex < 4) {
                 child.material.color.setStyle(lateralColor);
+                petalIndex++;
             }
             // Lower petal (index 4)
-            else if (index === 4) {
+            else if (petalIndex === 4) {
                 child.material.color.setStyle(lowerColor);
+                petalIndex++;
             }
-            // Face pattern (index 5)
-            else if (index === 5) {
+            // Face pattern ellipse
+            else if (child.material.color.getHex() === colors.facePattern.getHex() || 
+                     child.material.opacity === 0.9) {
                 child.material.color.setStyle(faceColor);
             }
-            // Face pattern lines (indices 6-11)
-            else if (index >= 6 && index <= 11) {
+            // Face pattern lines (all lines)
+            else if (child.type === 'Line') {
                 child.material.color.setStyle(faceColor);
             }
         }
