@@ -16,7 +16,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
 
 # Copy static files
 COPY index.html /usr/share/nginx/html/
-COPY flower.js /usr/share/nginx/html/
+COPY pansy.js /usr/share/nginx/html/
 
 # Expose port 8080 (non-privileged port)
 EXPOSE 8080
