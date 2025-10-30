@@ -441,8 +441,8 @@ window.resetColors = function() {
     window.applyColors();
 };
 
-// Sync color picker with text input
-document.addEventListener('DOMContentLoaded', function() {
+// Sync color picker with text input (wait for DOM)
+function setupColorInputs() {
     ['upperColor', 'lateralColor', 'lowerColor', 'faceColor'].forEach(id => {
         const colorInput = document.getElementById(id);
         const textInput = document.getElementById(id + 'Text');
@@ -459,5 +459,12 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     });
-});
+}
+
+// Setup when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupColorInputs);
+} else {
+    setupColorInputs();
+}
 
