@@ -20,12 +20,12 @@ const pointLight = new THREE.PointLight(0xffffff, 0.5);
 pointLight.position.set(-5, 5, -5);
 scene.add(pointLight);
 
-// Color configuration
+// Color configuration - more vibrant pansy colors
 const colors = {
     upperPetals: new THREE.Color(0x9370DB), // Purple
-    lateralPetals: new THREE.Color(0x9370DB), // Purple
+    lateralPetals: new THREE.Color(0x9370DB), // Purple (can be different)
     lowerPetal: new THREE.Color(0x9370DB), // Purple
-    facePattern: new THREE.Color(0x4B0082), // Dark purple/black
+    facePattern: new THREE.Color(0x2F1B4D), // Very dark purple/black for contrast
     center: new THREE.Color(0xFFD700) // Gold/yellow center
 };
 
@@ -117,10 +117,11 @@ function createPansy() {
     }
     
     const petalSettings = {
-        depth: 0.05,
+        depth: 0.06,
         bevelEnabled: true,
         bevelThickness: 0.02,
-        bevelSize: 0.02
+        bevelSize: 0.02,
+        steps: 2
     };
     
     // Upper two petals (overlapping)
@@ -269,18 +270,22 @@ function createPansy() {
     return flowerGroup;
 }
 
-// Create pansy leaves (heart-shaped/ovate)
+// Create pansy leaves (heart-shaped/ovate - more realistic)
 function createPansyLeaves() {
     const leavesGroup = new THREE.Group();
     
-    // Heart-shaped leaf
+    // Heart-shaped/ovate leaf with better proportions
     function createHeartLeafShape() {
         const shape = new THREE.Shape();
+        // Start at stem connection
         shape.moveTo(0, 0);
-        shape.quadraticCurveTo(-0.3, -0.2, -0.4, -0.5);
-        shape.quadraticCurveTo(-0.3, -0.8, 0, -1.0);
-        shape.quadraticCurveTo(0.3, -0.8, 0.4, -0.5);
-        shape.quadraticCurveTo(0.3, -0.2, 0, 0);
+        // Left side curves (heart shape)
+        shape.quadraticCurveTo(-0.25, -0.15, -0.35, -0.4);
+        shape.quadraticCurveTo(-0.3, -0.65, -0.15, -0.85);
+        shape.quadraticCurveTo(0, -0.95, 0.15, -0.85);
+        // Right side
+        shape.quadraticCurveTo(0.3, -0.65, 0.35, -0.4);
+        shape.quadraticCurveTo(0.25, -0.15, 0, 0);
         return shape;
     }
     
@@ -292,28 +297,32 @@ function createPansyLeaves() {
         bevelSize: 0.01
     });
     const leafMaterial = new THREE.MeshPhongMaterial({ 
-        color: 0x32CD32,
-        shininess: 20
+        color: 0x228B22, // Darker green
+        shininess: 15,
+        side: THREE.DoubleSide
     });
     
-    // Left leaf
+    // Left leaf (oriented naturally)
     const leftLeaf = new THREE.Mesh(leafGeometry, leafMaterial);
-    leftLeaf.rotation.z = -Math.PI / 6;
-    leftLeaf.position.set(-0.4, 1.0, 0);
-    leftLeaf.rotation.y = Math.PI / 4;
+    leftLeaf.rotation.z = -Math.PI / 5;
+    leftLeaf.position.set(-0.45, 1.1, 0.1);
+    leftLeaf.rotation.y = Math.PI / 3;
+    leftLeaf.rotation.x = 0.2;
     leavesGroup.add(leftLeaf);
     
     // Right leaf
     const rightLeaf = new THREE.Mesh(leafGeometry.clone(), leafMaterial);
-    rightLeaf.rotation.z = Math.PI / 6;
-    rightLeaf.position.set(0.4, 1.0, 0);
-    rightLeaf.rotation.y = -Math.PI / 4;
+    rightLeaf.rotation.z = Math.PI / 5;
+    rightLeaf.position.set(0.45, 1.1, -0.1);
+    rightLeaf.rotation.y = -Math.PI / 3;
+    rightLeaf.rotation.x = -0.2;
     leavesGroup.add(rightLeaf);
     
-    // Bottom leaf (optional third leaf)
+    // Bottom leaf (smaller, behind stem)
     const bottomLeaf = new THREE.Mesh(leafGeometry.clone(), leafMaterial);
+    bottomLeaf.scale.set(0.8, 0.8, 1);
     bottomLeaf.rotation.z = Math.PI;
-    bottomLeaf.position.set(0, 0.6, 0);
+    bottomLeaf.position.set(0, 0.7, -0.15);
     bottomLeaf.rotation.y = 0;
     leavesGroup.add(bottomLeaf);
     
