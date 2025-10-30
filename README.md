@@ -32,3 +32,7 @@ docker run -p 8080:80 3d-flower
 - Nginx (web server)
 - Docker & Docker Compose
 
+## VeilStream
+
+This project is configured for VeilStream deployment environments.
+
