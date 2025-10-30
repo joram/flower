@@ -387,3 +387,77 @@ window.addEventListener('resize', () => {
 
 animate();
 
+// Color customization functions (exposed globally)
+window.applyColors = function() {
+    const upperColor = document.getElementById('upperColor').value;
+    const lateralColor = document.getElementById('lateralColor').value;
+    const lowerColor = document.getElementById('lowerColor').value;
+    const faceColor = document.getElementById('faceColor').value;
+    
+    // Update color objects
+    colors.upperPetals.setStyle(upperColor);
+    colors.lateralPetals.setStyle(lateralColor);
+    colors.lowerPetal.setStyle(lowerColor);
+    colors.facePattern.setStyle(faceColor);
+    
+    // Update petal materials
+    pansy.children.forEach((child, index) => {
+        if (child.type === 'Mesh' && child.material) {
+            // Upper petals (first two)
+            if (index < 2) {
+                child.material.color.setStyle(upperColor);
+            }
+            // Lateral petals (next two)
+            else if (index < 4) {
+                child.material.color.setStyle(lateralColor);
+            }
+            // Lower petal (index 4)
+            else if (index === 4) {
+                child.material.color.setStyle(lowerColor);
+            }
+            // Face pattern (index 5)
+            else if (index === 5) {
+                child.material.color.setStyle(faceColor);
+            }
+            // Face pattern lines (indices 6-11)
+            else if (index >= 6 && index <= 11) {
+                child.material.color.setStyle(faceColor);
+            }
+        }
+    });
+    
+    // Update text inputs
+    document.getElementById('upperColorText').value = upperColor;
+    document.getElementById('lateralColorText').value = lateralColor;
+    document.getElementById('lowerColorText').value = lowerColor;
+    document.getElementById('faceColorText').value = faceColor;
+};
+
+window.resetColors = function() {
+    document.getElementById('upperColor').value = '#9370DB';
+    document.getElementById('lateralColor').value = '#9370DB';
+    document.getElementById('lowerColor').value = '#9370DB';
+    document.getElementById('faceColor').value = '#2F1B4D';
+    window.applyColors();
+};
+
+// Sync color picker with text input
+document.addEventListener('DOMContentLoaded', function() {
+    ['upperColor', 'lateralColor', 'lowerColor', 'faceColor'].forEach(id => {
+        const colorInput = document.getElementById(id);
+        const textInput = document.getElementById(id + 'Text');
+        
+        if (colorInput && textInput) {
+            colorInput.addEventListener('input', function() {
+                textInput.value = this.value;
+            });
+            
+            textInput.addEventListener('input', function() {
+                if (/^#[0-9A-F]{6}$/i.test(this.value)) {
+                    colorInput.value = this.value;
+                }
+            });
+        }
+    });
+});
+

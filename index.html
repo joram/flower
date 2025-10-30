@@ -19,10 +19,86 @@
             width: 100vw;
             height: 100vh;
         }
+        #colorPanel {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            z-index: 100;
+        }
+        #colorPanel h3 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+        }
+        .colorControl {
+            margin: 8px 0;
+        }
+        .colorControl label {
+            display: block;
+            margin-bottom: 4px;
+            font-weight: bold;
+        }
+        .colorControl input[type="color"] {
+            width: 100%;
+            height: 30px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .colorControl input[type="text"] {
+            width: 100%;
+            padding: 4px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 11px;
+        }
+        button {
+            margin-top: 10px;
+            padding: 6px 12px;
+            background: #9370DB;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        button:hover {
+            background: #7B68EE;
+        }
     </style>
 </head>
 <body>
     <div id="container"></div>
+    <div id="colorPanel">
+        <h3>Pansy Colors</h3>
+        <div class="colorControl">
+            <label for="upperColor">Upper Petals:</label>
+            <input type="color" id="upperColor" value="#9370DB">
+            <input type="text" id="upperColorText" value="#9370DB">
+        </div>
+        <div class="colorControl">
+            <label for="lateralColor">Lateral Petals:</label>
+            <input type="color" id="lateralColor" value="#9370DB">
+            <input type="text" id="lateralColorText" value="#9370DB">
+        </div>
+        <div class="colorControl">
+            <label for="lowerColor">Lower Petal:</label>
+            <input type="color" id="lowerColor" value="#9370DB">
+            <input type="text" id="lowerColorText" value="#9370DB">
+        </div>
+        <div class="colorControl">
+            <label for="faceColor">Face Pattern:</label>
+            <input type="color" id="faceColor" value="#2F1B4D">
+            <input type="text" id="faceColorText" value="#2F1B4D">
+        </div>
+        <button onclick="applyColors()">Apply Colors</button>
+        <button onclick="resetColors()">Reset</button>
+    </div>
     <script type="importmap">
         {
             "imports": {
