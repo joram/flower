@@ -440,32 +440,44 @@ function createPansyLeaves() {
         }
     }
     
-    // Left leaf (oriented naturally)
+    // Pansy leaves grow in a basal rosette - more clustered at base, less staggered
+    // Left leaf (oriented naturally, at base)
     const leftLeaf = new THREE.Mesh(leafGeometry, leafMaterial);
-    leftLeaf.rotation.z = -Math.PI / 5;
-    leftLeaf.position.set(-0.45, 1.1, 0.1);
-    leftLeaf.rotation.y = Math.PI / 3;
-    leftLeaf.rotation.x = 0.2;
+    leftLeaf.rotation.z = -Math.PI / 4;
+    leftLeaf.position.set(-0.35, 0.85, 0.15); // Lower, closer to base
+    leftLeaf.rotation.y = Math.PI / 4;
+    leftLeaf.rotation.x = 0.15;
     leavesGroup.add(leftLeaf);
     addLeafVeins(leftLeaf, leftLeaf.position, leftLeaf.rotation);
     
-    // Right leaf
+    // Right leaf (opposite side, similar height)
     const rightLeaf = new THREE.Mesh(leafGeometry.clone(), leafMaterial);
-    rightLeaf.rotation.z = Math.PI / 5;
-    rightLeaf.position.set(0.45, 1.1, -0.1);
-    rightLeaf.rotation.y = -Math.PI / 3;
-    rightLeaf.rotation.x = -0.2;
+    rightLeaf.rotation.z = Math.PI / 4;
+    rightLeaf.position.set(0.35, 0.85, -0.15); // Same height as left leaf
+    rightLeaf.rotation.y = -Math.PI / 4;
+    rightLeaf.rotation.x = -0.15;
     leavesGroup.add(rightLeaf);
     addLeafVeins(rightLeaf, rightLeaf.position, rightLeaf.rotation);
     
-    // Bottom leaf (smaller, behind stem)
-    const bottomLeaf = new THREE.Mesh(leafGeometry.clone(), leafMaterial);
-    bottomLeaf.scale.set(0.8, 0.8, 1);
-    bottomLeaf.rotation.z = Math.PI;
-    bottomLeaf.position.set(0, 0.7, -0.15);
-    bottomLeaf.rotation.y = 0;
-    leavesGroup.add(bottomLeaf);
-    addLeafVeins(bottomLeaf, bottomLeaf.position, bottomLeaf.rotation);
+    // Front leaf (facing camera, slightly lower)
+    const frontLeaf = new THREE.Mesh(leafGeometry.clone(), leafMaterial);
+    frontLeaf.scale.set(0.9, 0.9, 1);
+    frontLeaf.rotation.z = 0;
+    frontLeaf.position.set(0, 0.75, 0.2); // Slightly lower, in front
+    frontLeaf.rotation.y = 0;
+    frontLeaf.rotation.x = 0.1;
+    leavesGroup.add(frontLeaf);
+    addLeafVeins(frontLeaf, frontLeaf.position, frontLeaf.rotation);
+    
+    // Back leaf (behind stem, slightly lower)
+    const backLeaf = new THREE.Mesh(leafGeometry.clone(), leafMaterial);
+    backLeaf.scale.set(0.85, 0.85, 1);
+    backLeaf.rotation.z = Math.PI;
+    backLeaf.position.set(0, 0.7, -0.18); // Behind stem, slightly lower
+    backLeaf.rotation.y = 0;
+    backLeaf.rotation.x = -0.1;
+    leavesGroup.add(backLeaf);
+    addLeafVeins(backLeaf, backLeaf.position, backLeaf.rotation);
     
     return leavesGroup;
 }
@@ -484,9 +496,9 @@ flowerPlant.add(leaves);
 
 scene.add(flowerPlant);
 
-// Camera position - better angle to view the pansy
-camera.position.set(2.5, 1.8, 4);
-camera.lookAt(0, 1, 0);
+// Camera position - side view to see the flower better
+camera.position.set(0, 1.5, 6);
+camera.lookAt(0, 1.5, 0);
 
 // Animation loop
 function animate() {
