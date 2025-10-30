@@ -157,80 +157,107 @@ function createPansy() {
     const upperPetalShape = createUpperPetalShape();
     const upperPetalGeometry = new THREE.ExtrudeGeometry(upperPetalShape, petalSettings);
     
-    // Create PBR material for petals (more realistic)
-    function createPetalMaterial(baseColor) {
+    // Create PBR material for petals (more realistic with subtle color variation)
+    function createPetalMaterial(baseColor, variation = 0) {
+        const color = new THREE.Color(baseColor);
+        // Add subtle color variation for realism
+        if (variation !== 0) {
+            const hsl = { h: 0, s: 0, l: 0 };
+            color.getHSL(hsl);
+            hsl.h += variation * 0.05; // Slight hue shift
+            hsl.s += variation * 0.1; // Slight saturation variation
+            hsl.l += variation * 0.05; // Slight lightness variation
+            color.setHSL(hsl.h, Math.max(0, Math.min(1, hsl.s)), Math.max(0, Math.min(1, hsl.l)));
+        }
         return new THREE.MeshStandardMaterial({ 
-            color: baseColor,
-            metalness: 0.1,
-            roughness: 0.7,
+            color: color,
+            metalness: 0.05,
+            roughness: 0.75,
             transparent: true,
-            opacity: 0.92,
+            opacity: 0.94,
             side: THREE.DoubleSide
         });
     }
     
-    // Left upper petal - add slight curve/wave
+    // Left upper petal - add slight curve/wave with color variation
     const upperLeft = new THREE.Mesh(
         upperPetalGeometry,
-        createPetalMaterial(colors.upperPetals)
+        createPetalMaterial(colors.upperPetals, -0.1) // Slightly different shade
     );
     upperLeft.rotation.z = Math.PI / 3.5;
     upperLeft.position.set(-0.25, 0.25, 0);
     upperLeft.rotation.y = Math.PI / 2;
-    upperLeft.rotation.x = 0.1; // Slight tilt for realism
+    upperLeft.rotation.x = 0.12; // Slight tilt for realism
     flowerGroup.add(upperLeft);
     
-    // Right upper petal (slightly overlapping)
+    // Right upper petal (slightly overlapping) with color variation
     const upperRight = new THREE.Mesh(
         upperPetalGeometry.clone(),
-        createPetalMaterial(colors.upperPetals)
+        createPetalMaterial(colors.upperPetals, 0.1) // Slightly different shade
     );
     upperRight.rotation.z = -Math.PI / 3.5;
     upperRight.position.set(0.25, 0.25, 0);
     upperRight.rotation.y = Math.PI / 2;
-    upperRight.rotation.x = -0.1; // Slight tilt
+    upperRight.rotation.x = -0.12; // Slight tilt
     flowerGroup.add(upperRight);
     
     // Lateral petals (left and right)
     const lateralPetalShape = createLateralPetalShape();
     const lateralPetalGeometry = new THREE.ExtrudeGeometry(lateralPetalShape, petalSettings);
     
-    // Left lateral petal
+    // Left lateral petal with color variation
     const lateralLeft = new THREE.Mesh(
         lateralPetalGeometry,
-        createPetalMaterial(colors.lateralPetals)
+        createPetalMaterial(colors.lateralPetals, -0.15)
     );
     lateralLeft.rotation.z = Math.PI / 2.2;
     lateralLeft.position.set(-0.65, 0, 0);
     lateralLeft.rotation.y = Math.PI / 2;
-    lateralLeft.rotation.x = 0.15; // Curve outward
+    lateralLeft.rotation.x = 0.18; // Curve outward more
     flowerGroup.add(lateralLeft);
     
-    // Right lateral petal
+    // Right lateral petal with color variation
     const lateralRight = new THREE.Mesh(
         lateralPetalGeometry.clone(),
-        createPetalMaterial(colors.lateralPetals)
+        createPetalMaterial(colors.lateralPetals, 0.15)
     );
     lateralRight.rotation.z = -Math.PI / 2.2;
     lateralRight.position.set(0.65, 0, 0);
     lateralRight.rotation.y = Math.PI / 2;
-    lateralRight.rotation.x = -0.15; // Curve outward
+    lateralRight.rotation.x = -0.18; // Curve outward more
     flowerGroup.add(lateralRight);
     
     // Lower petal (largest, with face pattern)
     const lowerPetalShape = createLowerPetalShape();
     const lowerPetalGeometry = new THREE.ExtrudeGeometry(lowerPetalShape, petalSettings);
     
-    // Lower petal with PBR material
+    // Lower petal with PBR material - slightly richer color
     const lowerPetal = new THREE.Mesh(
         lowerPetalGeometry, 
-        createPetalMaterial(colors.lowerPetal)
+        createPetalMaterial(colors.lowerPetal, 0.05) // Slightly richer
     );
     lowerPetal.rotation.z = Math.PI;
     lowerPetal.position.set(0, -0.5, 0);
     lowerPetal.rotation.y = Math.PI / 2;
-    lowerPetal.rotation.x = 0.2; // Slight forward curve
+    lowerPetal.rotation.x = 0.25; // More forward curve for realism
     flowerGroup.add(lowerPetal);
+    
+    // Add subtle petal veins using lines
+    for (let i = 0; i < 5; i++) {
+        const veinAngle = (i / 5) * Math.PI * 2;
+        const veinGeometry = new THREE.BufferGeometry().setFromPoints([
+            new THREE.Vector3(0, -0.5, 0.09),
+            new THREE.Vector3(Math.cos(veinAngle) * 0.6, -0.5 + Math.sin(veinAngle) * 0.4, 0.09)
+        ]);
+        const veinMaterial = new THREE.LineBasicMaterial({ 
+            color: colors.lowerPetal,
+            transparent: true,
+            opacity: 0.15,
+            linewidth: 1
+        });
+        const vein = new THREE.Line(veinGeometry, veinMaterial);
+        flowerGroup.add(vein);
+    }
     
     // Add face pattern - gradient from center to edges
     const facePatternShape = new THREE.Shape();
@@ -364,17 +391,44 @@ function createPansyLeaves() {
     
     const leafShape = createHeartLeafShape();
     const leafGeometry = new THREE.ExtrudeGeometry(leafShape, {
-        depth: 0.02,
+        depth: 0.025,
         bevelEnabled: true,
-        bevelThickness: 0.01,
-        bevelSize: 0.01
+        bevelThickness: 0.015,
+        bevelSize: 0.01,
+        curveSegments: 24
     });
     const leafMaterial = new THREE.MeshStandardMaterial({ 
         color: 0x228B22, // Darker green
         metalness: 0.0,
-        roughness: 0.8,
+        roughness: 0.85,
         side: THREE.DoubleSide
     });
+    
+    // Function to add leaf veins
+    function addLeafVeins(leaf, position, rotation) {
+        for (let i = 0; i < 3; i++) {
+            const veinAngle = (i - 1) * 0.3;
+            const veinGeometry = new THREE.BufferGeometry().setFromPoints([
+                new THREE.Vector3(position.x, position.y, position.z + 0.03),
+                new THREE.Vector3(
+                    position.x + Math.cos(veinAngle) * 0.3, 
+                    position.y - 0.4 + Math.sin(veinAngle) * 0.2, 
+                    position.z + 0.03
+                )
+            ]);
+            const veinMaterial = new THREE.LineBasicMaterial({ 
+                color: 0x1a6b1a,
+                transparent: true,
+                opacity: 0.3,
+                linewidth: 1
+            });
+            const vein = new THREE.Line(veinGeometry, veinMaterial);
+            vein.rotation.z = rotation.z;
+            vein.rotation.y = rotation.y;
+            vein.rotation.x = rotation.x;
+            leavesGroup.add(vein);
+        }
+    }
     
     // Left leaf (oriented naturally)
     const leftLeaf = new THREE.Mesh(leafGeometry, leafMaterial);
@@ -383,6 +437,7 @@ function createPansyLeaves() {
     leftLeaf.rotation.y = Math.PI / 3;
     leftLeaf.rotation.x = 0.2;
     leavesGroup.add(leftLeaf);
+    addLeafVeins(leftLeaf, leftLeaf.position, leftLeaf.rotation);
     
     // Right leaf
     const rightLeaf = new THREE.Mesh(leafGeometry.clone(), leafMaterial);
@@ -391,6 +446,7 @@ function createPansyLeaves() {
     rightLeaf.rotation.y = -Math.PI / 3;
     rightLeaf.rotation.x = -0.2;
     leavesGroup.add(rightLeaf);
+    addLeafVeins(rightLeaf, rightLeaf.position, rightLeaf.rotation);
     
     // Bottom leaf (smaller, behind stem)
     const bottomLeaf = new THREE.Mesh(leafGeometry.clone(), leafMaterial);
@@ -399,6 +455,7 @@ function createPansyLeaves() {
     bottomLeaf.position.set(0, 0.7, -0.15);
     bottomLeaf.rotation.y = 0;
     leavesGroup.add(bottomLeaf);
+    addLeafVeins(bottomLeaf, bottomLeaf.position, bottomLeaf.rotation);
     
     return leavesGroup;
 }
