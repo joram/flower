@@ -8,25 +8,29 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setClearColor(0x87CEEB, 1);
 document.getElementById('container').appendChild(renderer.domElement);
 
-// Lighting - more realistic pansy lighting
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+// Lighting - realistic pansy lighting with PBR support
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
 scene.add(ambientLight);
 
-// Main directional light (sun)
-const directionalLight = new THREE.DirectionalLight(0xffffff, 0.9);
-directionalLight.position.set(4, 8, 4);
+// Main directional light (sun) - stronger for realism
+const directionalLight = new THREE.DirectionalLight(0xffffff, 1.2);
+directionalLight.position.set(5, 10, 5);
 directionalLight.castShadow = false;
 scene.add(directionalLight);
 
 // Fill light for softer shadows
-const fillLight = new THREE.DirectionalLight(0xffffff, 0.3);
-fillLight.position.set(-3, 5, -3);
+const fillLight = new THREE.DirectionalLight(0xffffff, 0.4);
+fillLight.position.set(-4, 6, -4);
 scene.add(fillLight);
 
-// Subtle rim light
-const rimLight = new THREE.PointLight(0xffffff, 0.4);
-rimLight.position.set(-2, 3, -2);
+// Subtle rim light for depth
+const rimLight = new THREE.PointLight(0xffffff, 0.5);
+rimLight.position.set(-3, 4, -3);
 scene.add(rimLight);
+
+// Hemisphere light for natural sky lighting
+const hemisphereLight = new THREE.HemisphereLight(0x87CEEB, 0x4A5D23, 0.3);
+scene.add(hemisphereLight);
 
 // Color configuration - more vibrant pansy colors
 const colors = {
@@ -37,34 +41,50 @@ const colors = {
     center: new THREE.Color(0xFFD700) // Gold/yellow center
 };
 
-// Create pot
+// Create pot - more realistic terracotta
 function createPot() {
     const potGroup = new THREE.Group();
     
-    // Pot body (truncated cone)
+    // Pot body (truncated cone with more segments)
     const potGeometry = new THREE.CylinderGeometry(0.8, 0.6, 1.2, 32);
-    const potMaterial = new THREE.MeshPhongMaterial({ 
+    const potMaterial = new THREE.MeshStandardMaterial({ 
         color: 0x8B4513,
-        shininess: 30
+        metalness: 0.1,
+        roughness: 0.85,
+        flatShading: false
     });
     const pot = new THREE.Mesh(potGeometry, potMaterial);
     pot.position.y = -1.5;
     potGroup.add(pot);
     
-    // Pot rim
-    const rimGeometry = new THREE.TorusGeometry(0.8, 0.05, 16, 32);
-    const rimMaterial = new THREE.MeshPhongMaterial({ color: 0x654321 });
+    // Pot rim (more detailed)
+    const rimGeometry = new THREE.TorusGeometry(0.8, 0.06, 16, 32);
+    const rimMaterial = new THREE.MeshStandardMaterial({ 
+        color: 0x654321,
+        metalness: 0.1,
+        roughness: 0.8
+    });
     const rim = new THREE.Mesh(rimGeometry, rimMaterial);
     rim.position.y = -0.9;
     potGroup.add(rim);
     
+    // Inner rim detail
+    const innerRimGeometry = new THREE.TorusGeometry(0.75, 0.02, 8, 32);
+    const innerRim = new THREE.Mesh(innerRimGeometry, rimMaterial);
+    innerRim.position.y = -0.88;
+    potGroup.add(innerRim);
+    
     return potGroup;
 }
 
-// Create stem
+// Create stem - more realistic
 function createStem() {
-    const stemGeometry = new THREE.CylinderGeometry(0.03, 0.03, 2, 16);
-    const stemMaterial = new THREE.MeshPhongMaterial({ color: 0x228B22 });
+    const stemGeometry = new THREE.CylinderGeometry(0.032, 0.028, 2, 16);
+    const stemMaterial = new THREE.MeshStandardMaterial({ 
+        color: 0x228B22,
+        metalness: 0.0,
+        roughness: 0.9
+    });
     const stem = new THREE.Mesh(stemGeometry, stemMaterial);
     stem.position.y = 0.5;
     return stem;
@@ -125,45 +145,50 @@ function createPansy() {
     }
     
     const petalSettings = {
-        depth: 0.06,
+        depth: 0.08,
         bevelEnabled: true,
-        bevelThickness: 0.02,
+        bevelThickness: 0.03,
         bevelSize: 0.02,
-        steps: 2
+        steps: 3,
+        curveSegments: 32
     };
     
     // Upper two petals (overlapping)
     const upperPetalShape = createUpperPetalShape();
     const upperPetalGeometry = new THREE.ExtrudeGeometry(upperPetalShape, petalSettings);
     
-    // Left upper petal
+    // Create PBR material for petals (more realistic)
+    function createPetalMaterial(baseColor) {
+        return new THREE.MeshStandardMaterial({ 
+            color: baseColor,
+            metalness: 0.1,
+            roughness: 0.7,
+            transparent: true,
+            opacity: 0.92,
+            side: THREE.DoubleSide
+        });
+    }
+    
+    // Left upper petal - add slight curve/wave
     const upperLeft = new THREE.Mesh(
         upperPetalGeometry,
-        new THREE.MeshPhongMaterial({ 
-            color: colors.upperPetals,
-            shininess: 50,
-            transparent: true,
-            opacity: 0.95
-        })
+        createPetalMaterial(colors.upperPetals)
     );
     upperLeft.rotation.z = Math.PI / 3.5;
     upperLeft.position.set(-0.25, 0.25, 0);
     upperLeft.rotation.y = Math.PI / 2;
+    upperLeft.rotation.x = 0.1; // Slight tilt for realism
     flowerGroup.add(upperLeft);
     
     // Right upper petal (slightly overlapping)
     const upperRight = new THREE.Mesh(
         upperPetalGeometry.clone(),
-        new THREE.MeshPhongMaterial({ 
-            color: colors.upperPetals,
-            shininess: 50,
-            transparent: true,
-            opacity: 0.95
-        })
+        createPetalMaterial(colors.upperPetals)
     );
     upperRight.rotation.z = -Math.PI / 3.5;
     upperRight.position.set(0.25, 0.25, 0);
     upperRight.rotation.y = Math.PI / 2;
+    upperRight.rotation.x = -0.1; // Slight tilt
     flowerGroup.add(upperRight);
     
     // Lateral petals (left and right)
@@ -173,105 +198,145 @@ function createPansy() {
     // Left lateral petal
     const lateralLeft = new THREE.Mesh(
         lateralPetalGeometry,
-        new THREE.MeshPhongMaterial({ 
-            color: colors.lateralPetals,
-            shininess: 50,
-            transparent: true,
-            opacity: 0.95
-        })
+        createPetalMaterial(colors.lateralPetals)
     );
     lateralLeft.rotation.z = Math.PI / 2.2;
     lateralLeft.position.set(-0.65, 0, 0);
     lateralLeft.rotation.y = Math.PI / 2;
+    lateralLeft.rotation.x = 0.15; // Curve outward
     flowerGroup.add(lateralLeft);
     
     // Right lateral petal
     const lateralRight = new THREE.Mesh(
         lateralPetalGeometry.clone(),
-        new THREE.MeshPhongMaterial({ 
-            color: colors.lateralPetals,
-            shininess: 50,
-            transparent: true,
-            opacity: 0.95
-        })
+        createPetalMaterial(colors.lateralPetals)
     );
     lateralRight.rotation.z = -Math.PI / 2.2;
     lateralRight.position.set(0.65, 0, 0);
     lateralRight.rotation.y = Math.PI / 2;
+    lateralRight.rotation.x = -0.15; // Curve outward
     flowerGroup.add(lateralRight);
     
     // Lower petal (largest, with face pattern)
     const lowerPetalShape = createLowerPetalShape();
     const lowerPetalGeometry = new THREE.ExtrudeGeometry(lowerPetalShape, petalSettings);
     
-    // Create face pattern using a shader or gradient material
-    const lowerPetalMaterial = new THREE.MeshPhongMaterial({ 
-        color: colors.lowerPetal,
-        shininess: 50,
-        transparent: true,
-        opacity: 0.95
-    });
-    
-    const lowerPetal = new THREE.Mesh(lowerPetalGeometry, lowerPetalMaterial);
+    // Lower petal with PBR material
+    const lowerPetal = new THREE.Mesh(
+        lowerPetalGeometry, 
+        createPetalMaterial(colors.lowerPetal)
+    );
     lowerPetal.rotation.z = Math.PI;
     lowerPetal.position.set(0, -0.5, 0);
     lowerPetal.rotation.y = Math.PI / 2;
+    lowerPetal.rotation.x = 0.2; // Slight forward curve
     flowerGroup.add(lowerPetal);
     
-    // Add face pattern using a dark ellipse overlay (more visible)
-    const facePatternGeometry = new THREE.EllipseCurve(0, 0, 0.3, 0.2, 0, Math.PI * 2, false, 0);
+    // Add face pattern - gradient from center to edges
     const facePatternShape = new THREE.Shape();
-    facePatternShape.ellipse(0, 0, 0.3, 0.2, 0, Math.PI * 2, false);
+    facePatternShape.ellipse(0, 0, 0.35, 0.25, 0, Math.PI * 2, false);
     const facePatternExtrude = new THREE.ExtrudeGeometry(facePatternShape, {
-        depth: 0.01,
-        bevelEnabled: false
+        depth: 0.015,
+        bevelEnabled: true,
+        bevelThickness: 0.005,
+        bevelSize: 0.01,
+        curveSegments: 24
     });
-    const facePatternMaterial = new THREE.MeshPhongMaterial({ 
+    const facePatternMaterial = new THREE.MeshStandardMaterial({ 
         color: colors.facePattern,
+        metalness: 0.2,
+        roughness: 0.8,
         transparent: true,
-        opacity: 0.85
+        opacity: 0.9
     });
     const facePattern = new THREE.Mesh(facePatternExtrude, facePatternMaterial);
-    facePattern.position.set(0, -0.45, 0.06);
+    facePattern.position.set(0, -0.45, 0.065);
     facePattern.rotation.y = Math.PI / 2;
     flowerGroup.add(facePattern);
     
-    // Add radiating lines for face pattern (more visible)
-    for (let i = 0; i < 6; i++) {
-        const angle = (i / 6) * Math.PI * 2;
+    // Add radiating lines for face pattern (thicker, more visible)
+    for (let i = 0; i < 8; i++) {
+        const angle = (i / 8) * Math.PI * 2;
         const lineGeometry = new THREE.BufferGeometry().setFromPoints([
-            new THREE.Vector3(0, -0.45, 0.08),
-            new THREE.Vector3(Math.cos(angle) * 0.5, -0.45 + Math.sin(angle) * 0.3, 0.08)
+            new THREE.Vector3(0, -0.45, 0.085),
+            new THREE.Vector3(Math.cos(angle) * 0.55, -0.45 + Math.sin(angle) * 0.35, 0.085)
         ]);
         const lineMaterial = new THREE.LineBasicMaterial({ 
             color: colors.facePattern,
             transparent: true,
-            opacity: 0.7,
-            linewidth: 2
+            opacity: 0.8,
+            linewidth: 3
         });
         const line = new THREE.Line(lineGeometry, lineMaterial);
         flowerGroup.add(line);
     }
     
-    // Center of flower (stamens and pistil)
-    const centerGeometry = new THREE.SphereGeometry(0.12, 16, 16);
-    const centerMaterial = new THREE.MeshPhongMaterial({ 
-        color: colors.center,
-        shininess: 100
-    });
-    const center = new THREE.Mesh(centerGeometry, centerMaterial);
-    center.position.y = 0.05;
-    flowerGroup.add(center);
+    // Add secondary radiating pattern (lighter, more subtle)
+    for (let i = 0; i < 16; i++) {
+        const angle = (i / 16) * Math.PI * 2;
+        const lineGeometry = new THREE.BufferGeometry().setFromPoints([
+            new THREE.Vector3(Math.cos(angle) * 0.15, -0.45 + Math.sin(angle) * 0.1, 0.07),
+            new THREE.Vector3(Math.cos(angle) * 0.4, -0.45 + Math.sin(angle) * 0.25, 0.07)
+        ]);
+        const lineMaterial = new THREE.LineBasicMaterial({ 
+            color: colors.facePattern,
+            transparent: true,
+            opacity: 0.4,
+            linewidth: 1
+        });
+        const line = new THREE.Line(lineGeometry, lineMaterial);
+        flowerGroup.add(line);
+    }
     
-    // Add small stamens around center
-    for (let i = 0; i < 5; i++) {
-        const angle = (i / 5) * Math.PI * 2;
-        const stamenGeometry = new THREE.CylinderGeometry(0.01, 0.01, 0.15, 8);
-        const stamenMaterial = new THREE.MeshPhongMaterial({ color: 0xFFD700 });
+    // Center of flower (pistil) - more detailed
+    const pistilGeometry = new THREE.ConeGeometry(0.08, 0.2, 16);
+    const pistilMaterial = new THREE.MeshStandardMaterial({ 
+        color: colors.center,
+        metalness: 0.3,
+        roughness: 0.4
+    });
+    const pistil = new THREE.Mesh(pistilGeometry, pistilMaterial);
+    pistil.position.y = 0.05;
+    pistil.rotation.x = Math.PI;
+    flowerGroup.add(pistil);
+    
+    // Base of pistil (wider)
+    const pistilBaseGeometry = new THREE.SphereGeometry(0.1, 16, 16);
+    const pistilBase = new THREE.Mesh(pistilBaseGeometry, pistilMaterial);
+    pistilBase.position.y = 0.05;
+    flowerGroup.add(pistilBase);
+    
+    // Add realistic stamens around center (more detail)
+    for (let i = 0; i < 8; i++) {
+        const angle = (i / 8) * Math.PI * 2;
+        const radius = 0.09 + (i % 2) * 0.02; // Vary radius
+        
+        // Stamen filament
+        const stamenGeometry = new THREE.CylinderGeometry(0.008, 0.008, 0.18, 8);
+        const stamenMaterial = new THREE.MeshStandardMaterial({ 
+            color: 0xFFE55C,
+            metalness: 0.1,
+            roughness: 0.9
+        });
         const stamen = new THREE.Mesh(stamenGeometry, stamenMaterial);
-        stamen.position.set(Math.cos(angle) * 0.08, 0.08, Math.sin(angle) * 0.08);
-        stamen.rotation.z = Math.PI / 4;
+        stamen.position.set(Math.cos(angle) * radius, 0.12, Math.sin(angle) * radius);
+        stamen.rotation.z = Math.PI / 6;
         flowerGroup.add(stamen);
+        
+        // Anther (pollen sac) at top of stamen
+        const antherGeometry = new THREE.SphereGeometry(0.015, 8, 8);
+        const antherMaterial = new THREE.MeshStandardMaterial({ 
+            color: 0xFFA500,
+            metalness: 0.2,
+            roughness: 0.7
+        });
+        const anther = new THREE.Mesh(antherGeometry, antherMaterial);
+        anther.position.set(
+            Math.cos(angle) * radius, 
+            0.21, 
+            Math.sin(angle) * radius
+        );
+        flowerGroup.add(anther);
     }
     
     flowerGroup.position.y = 2.5;
@@ -304,9 +369,10 @@ function createPansyLeaves() {
         bevelThickness: 0.01,
         bevelSize: 0.01
     });
-    const leafMaterial = new THREE.MeshPhongMaterial({ 
+    const leafMaterial = new THREE.MeshStandardMaterial({ 
         color: 0x228B22, // Darker green
-        shininess: 15,
+        metalness: 0.0,
+        roughness: 0.8,
         side: THREE.DoubleSide
     });
     
