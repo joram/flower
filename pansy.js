@@ -96,61 +96,71 @@ function createStem() {
 function createPansy() {
     const flowerGroup = new THREE.Group();
     
-    // Upper petal shape (rounded, wider at top - more realistic pansy shape with waves)
+    // Upper petal shape - based on real pansy proportions
+    // Upper petals are typically smaller and more rounded than lower petal
     function createUpperPetalShape() {
         const shape = new THREE.Shape();
         shape.moveTo(0, 0);
-        // Top curves with slight waves for realism
-        shape.quadraticCurveTo(0.12, -0.12, 0.28, -0.28);
-        shape.quadraticCurveTo(0.38, -0.38, 0.48, -0.52);
-        shape.quadraticCurveTo(0.55, -0.62, 0.58, -0.72);
-        shape.quadraticCurveTo(0.56, -0.78, 0.48, -0.82);
-        shape.quadraticCurveTo(0.35, -0.84, 0.2, -0.86);
-        // Top center with slight indent
-        shape.quadraticCurveTo(0.1, -0.87, 0, -0.87);
-        // Other side with waves
-        shape.quadraticCurveTo(-0.1, -0.87, -0.2, -0.86);
-        shape.quadraticCurveTo(-0.35, -0.84, -0.48, -0.82);
-        shape.quadraticCurveTo(-0.56, -0.78, -0.58, -0.72);
-        shape.quadraticCurveTo(-0.55, -0.62, -0.48, -0.52);
-        shape.quadraticCurveTo(-0.38, -0.38, -0.28, -0.28);
-        shape.quadraticCurveTo(-0.12, -0.12, 0, 0);
+        // More accurate upper petal shape - wider at top, narrower at base
+        shape.quadraticCurveTo(0.1, -0.1, 0.25, -0.25);
+        shape.quadraticCurveTo(0.35, -0.38, 0.42, -0.5);
+        shape.quadraticCurveTo(0.48, -0.6, 0.52, -0.68);
+        shape.quadraticCurveTo(0.54, -0.74, 0.52, -0.78);
+        shape.quadraticCurveTo(0.48, -0.8, 0.4, -0.82);
+        shape.quadraticCurveTo(0.28, -0.83, 0.15, -0.84);
+        // Top center - slight indent
+        shape.quadraticCurveTo(0.08, -0.85, 0, -0.85);
+        // Other side - mirror
+        shape.quadraticCurveTo(-0.08, -0.85, -0.15, -0.84);
+        shape.quadraticCurveTo(-0.28, -0.83, -0.4, -0.82);
+        shape.quadraticCurveTo(-0.48, -0.8, -0.52, -0.78);
+        shape.quadraticCurveTo(-0.54, -0.74, -0.52, -0.68);
+        shape.quadraticCurveTo(-0.48, -0.6, -0.42, -0.5);
+        shape.quadraticCurveTo(-0.35, -0.38, -0.25, -0.25);
+        shape.quadraticCurveTo(-0.1, -0.1, 0, 0);
         return shape;
     }
     
-    // Lower petal shape (largest, more rounded, wider with natural waves)
+    // Lower petal shape - largest petal, more rounded with pronounced curves
+    // Based on real pansy: lower petal is 1.5-2x larger than upper petals
     function createLowerPetalShape() {
         const shape = new THREE.Shape();
         shape.moveTo(0, 0);
-        // Wider, more rounded bottom petal with wavy edges
-        shape.quadraticCurveTo(0.22, 0.12, 0.42, 0.30);
-        shape.quadraticCurveTo(0.58, 0.48, 0.68, 0.68);
-        shape.quadraticCurveTo(0.74, 0.82, 0.78, 0.95);
-        shape.quadraticCurveTo(0.76, 1.08, 0.68, 1.16);
-        shape.quadraticCurveTo(0.52, 1.22, 0.35, 1.24);
-        shape.quadraticCurveTo(0.18, 1.25, 0, 1.25);
-        // Other side with matching waves
-        shape.quadraticCurveTo(-0.18, 1.25, -0.35, 1.24);
-        shape.quadraticCurveTo(-0.52, 1.22, -0.68, 1.16);
-        shape.quadraticCurveTo(-0.76, 1.08, -0.78, 0.95);
-        shape.quadraticCurveTo(-0.74, 0.82, -0.68, 0.68);
-        shape.quadraticCurveTo(-0.58, 0.48, -0.42, 0.30);
-        shape.quadraticCurveTo(-0.22, 0.12, 0, 0);
+        // Wider, more rounded bottom petal - realistic proportions
+        shape.quadraticCurveTo(0.18, 0.1, 0.35, 0.25);
+        shape.quadraticCurveTo(0.5, 0.42, 0.6, 0.6);
+        shape.quadraticCurveTo(0.68, 0.75, 0.72, 0.88);
+        shape.quadraticCurveTo(0.74, 1.0, 0.72, 1.12);
+        shape.quadraticCurveTo(0.68, 1.22, 0.6, 1.28);
+        shape.quadraticCurveTo(0.48, 1.32, 0.35, 1.34);
+        shape.quadraticCurveTo(0.2, 1.35, 0, 1.35);
+        // Other side
+        shape.quadraticCurveTo(-0.2, 1.35, -0.35, 1.34);
+        shape.quadraticCurveTo(-0.48, 1.32, -0.6, 1.28);
+        shape.quadraticCurveTo(-0.68, 1.22, -0.72, 1.12);
+        shape.quadraticCurveTo(-0.74, 1.0, -0.72, 0.88);
+        shape.quadraticCurveTo(-0.68, 0.75, -0.6, 0.6);
+        shape.quadraticCurveTo(-0.5, 0.42, -0.35, 0.25);
+        shape.quadraticCurveTo(-0.18, 0.1, 0, 0);
         return shape;
     }
     
-    // Lateral petal shape (oval, pointing outward)
+    // Lateral petal shape - oval, elongated, pointing outward
+    // Lateral petals are typically narrower than lower but wider than upper
     function createLateralPetalShape() {
         const shape = new THREE.Shape();
         shape.moveTo(0, 0);
-        // More elongated oval shape
-        shape.quadraticCurveTo(0.35, 0.05, 0.55, 0.3);
-        shape.quadraticCurveTo(0.6, 0.55, 0.5, 0.75);
-        shape.quadraticCurveTo(0.35, 0.85, 0.15, 0.8);
-        shape.quadraticCurveTo(0, 0.7, -0.15, 0.8);
-        shape.quadraticCurveTo(-0.35, 0.85, -0.5, 0.75);
-        shape.quadraticCurveTo(-0.6, 0.55, -0.55, 0.3);
-        shape.quadraticCurveTo(-0.35, 0.05, 0, 0);
+        // More elongated oval shape for lateral petals
+        shape.quadraticCurveTo(0.3, 0.04, 0.48, 0.25);
+        shape.quadraticCurveTo(0.58, 0.42, 0.62, 0.6);
+        shape.quadraticCurveTo(0.6, 0.72, 0.52, 0.78);
+        shape.quadraticCurveTo(0.4, 0.82, 0.25, 0.8);
+        shape.quadraticCurveTo(0.1, 0.75, -0.05, 0.8);
+        shape.quadraticCurveTo(-0.25, 0.82, -0.4, 0.78);
+        shape.quadraticCurveTo(-0.52, 0.72, -0.6, 0.6);
+        shape.quadraticCurveTo(-0.62, 0.42, -0.58, 0.25);
+        shape.quadraticCurveTo(-0.48, 0.04, -0.3, 0);
+        shape.quadraticCurveTo(-0.1, 0, 0, 0);
         return shape;
     }
     
@@ -189,136 +199,144 @@ function createPansy() {
         });
     }
     
-    // Left upper petal - add slight curve/wave with color variation
+    // Upper petals should overlap slightly - more realistic arrangement
+    // Left upper petal
     const upperLeft = new THREE.Mesh(
         upperPetalGeometry,
-        createPetalMaterial(colors.upperPetals, -0.1) // Slightly different shade
+        createPetalMaterial(colors.upperPetals, -0.1)
     );
-    upperLeft.rotation.z = Math.PI / 3.5;
-    upperLeft.position.set(-0.25, 0.25, 0);
+    upperLeft.rotation.z = Math.PI / 3.2; // Slightly more overlap
+    upperLeft.position.set(-0.2, 0.28, 0.02); // Slightly forward for overlap
     upperLeft.rotation.y = Math.PI / 2;
-    upperLeft.rotation.x = 0.12; // Slight tilt for realism
+    upperLeft.rotation.x = 0.15; // More tilt for natural look
     flowerGroup.add(upperLeft);
     
-    // Right upper petal (slightly overlapping) with color variation
+    // Right upper petal (overlapping with left)
     const upperRight = new THREE.Mesh(
         upperPetalGeometry.clone(),
-        createPetalMaterial(colors.upperPetals, 0.1) // Slightly different shade
+        createPetalMaterial(colors.upperPetals, 0.1)
     );
-    upperRight.rotation.z = -Math.PI / 3.5;
-    upperRight.position.set(0.25, 0.25, 0);
+    upperRight.rotation.z = -Math.PI / 3.2; // Slightly more overlap
+    upperRight.position.set(0.2, 0.28, -0.02); // Slightly back for overlap
     upperRight.rotation.y = Math.PI / 2;
-    upperRight.rotation.x = -0.12; // Slight tilt
+    upperRight.rotation.x = -0.15; // More tilt
     flowerGroup.add(upperRight);
     
     // Lateral petals (left and right)
     const lateralPetalShape = createLateralPetalShape();
     const lateralPetalGeometry = new THREE.ExtrudeGeometry(lateralPetalShape, petalSettings);
     
-    // Left lateral petal with color variation
+    // Lateral petals - should extend outward more naturally
+    // Left lateral petal
     const lateralLeft = new THREE.Mesh(
         lateralPetalGeometry,
         createPetalMaterial(colors.lateralPetals, -0.15)
     );
-    lateralLeft.rotation.z = Math.PI / 2.2;
-    lateralLeft.position.set(-0.65, 0, 0);
+    lateralLeft.rotation.z = Math.PI / 2.1; // More horizontal
+    lateralLeft.position.set(-0.7, 0.05, 0); // Further out
     lateralLeft.rotation.y = Math.PI / 2;
-    lateralLeft.rotation.x = 0.18; // Curve outward more
+    lateralLeft.rotation.x = 0.2; // Curve outward more
     flowerGroup.add(lateralLeft);
     
-    // Right lateral petal with color variation
+    // Right lateral petal
     const lateralRight = new THREE.Mesh(
         lateralPetalGeometry.clone(),
         createPetalMaterial(colors.lateralPetals, 0.15)
     );
-    lateralRight.rotation.z = -Math.PI / 2.2;
-    lateralRight.position.set(0.65, 0, 0);
+    lateralRight.rotation.z = -Math.PI / 2.1; // More horizontal
+    lateralRight.position.set(0.7, 0.05, 0); // Further out
     lateralRight.rotation.y = Math.PI / 2;
-    lateralRight.rotation.x = -0.18; // Curve outward more
+    lateralRight.rotation.x = -0.2; // Curve outward more
     flowerGroup.add(lateralRight);
     
     // Lower petal (largest, with face pattern)
     const lowerPetalShape = createLowerPetalShape();
     const lowerPetalGeometry = new THREE.ExtrudeGeometry(lowerPetalShape, petalSettings);
     
-    // Lower petal with PBR material - slightly richer color
+    // Lower petal - largest, most prominent with face pattern
     const lowerPetal = new THREE.Mesh(
         lowerPetalGeometry, 
-        createPetalMaterial(colors.lowerPetal, 0.05) // Slightly richer
+        createPetalMaterial(colors.lowerPetal, 0.05)
     );
     lowerPetal.rotation.z = Math.PI;
-    lowerPetal.position.set(0, -0.5, 0);
+    lowerPetal.position.set(0, -0.52, 0); // Slightly lower
     lowerPetal.rotation.y = Math.PI / 2;
-    lowerPetal.rotation.x = 0.25; // More forward curve for realism
+    lowerPetal.rotation.x = 0.3; // More forward curve for realism
     flowerGroup.add(lowerPetal);
     
-    // Add subtle petal veins using lines
-    for (let i = 0; i < 5; i++) {
-        const veinAngle = (i / 5) * Math.PI * 2;
+    // Add subtle petal veins radiating from center
+    for (let i = 0; i < 7; i++) {
+        const veinAngle = (i / 7) * Math.PI * 2;
+        const veinLength = 0.65;
         const veinGeometry = new THREE.BufferGeometry().setFromPoints([
-            new THREE.Vector3(0, -0.5, 0.09),
-            new THREE.Vector3(Math.cos(veinAngle) * 0.6, -0.5 + Math.sin(veinAngle) * 0.4, 0.09)
+            new THREE.Vector3(0, -0.52, 0.095),
+            new THREE.Vector3(
+                Math.cos(veinAngle) * veinLength, 
+                -0.52 + Math.sin(veinAngle) * (veinLength * 0.6), 
+                0.095
+            )
         ]);
         const veinMaterial = new THREE.LineBasicMaterial({ 
             color: colors.lowerPetal,
             transparent: true,
-            opacity: 0.15,
+            opacity: 0.12,
             linewidth: 1
         });
         const vein = new THREE.Line(veinGeometry, veinMaterial);
         flowerGroup.add(vein);
     }
     
-    // Add face pattern - gradient from center to edges
+    // Face pattern - more realistic pansy face
+    // Dark center ellipse with gradient effect
     const facePatternShape = new THREE.Shape();
-    facePatternShape.ellipse(0, 0, 0.35, 0.25, 0, Math.PI * 2, false);
+    facePatternShape.ellipse(0, 0, 0.38, 0.28, 0, Math.PI * 2, false);
     const facePatternExtrude = new THREE.ExtrudeGeometry(facePatternShape, {
-        depth: 0.015,
+        depth: 0.018,
         bevelEnabled: true,
-        bevelThickness: 0.005,
-        bevelSize: 0.01,
-        curveSegments: 24
+        bevelThickness: 0.008,
+        bevelSize: 0.012,
+        curveSegments: 32
     });
     const facePatternMaterial = new THREE.MeshStandardMaterial({ 
         color: colors.facePattern,
-        metalness: 0.2,
-        roughness: 0.8,
+        metalness: 0.15,
+        roughness: 0.85,
         transparent: true,
-        opacity: 0.9
+        opacity: 0.92
     });
     const facePattern = new THREE.Mesh(facePatternExtrude, facePatternMaterial);
-    facePattern.position.set(0, -0.45, 0.065);
+    facePattern.position.set(0, -0.47, 0.07);
     facePattern.rotation.y = Math.PI / 2;
     flowerGroup.add(facePattern);
     
-    // Add radiating lines for face pattern (thicker, more visible)
+    // Primary radiating lines (8 main veins)
     for (let i = 0; i < 8; i++) {
         const angle = (i / 8) * Math.PI * 2;
         const lineGeometry = new THREE.BufferGeometry().setFromPoints([
-            new THREE.Vector3(0, -0.45, 0.085),
-            new THREE.Vector3(Math.cos(angle) * 0.55, -0.45 + Math.sin(angle) * 0.35, 0.085)
+            new THREE.Vector3(0, -0.47, 0.095),
+            new THREE.Vector3(Math.cos(angle) * 0.62, -0.47 + Math.sin(angle) * 0.38, 0.095)
         ]);
         const lineMaterial = new THREE.LineBasicMaterial({ 
             color: colors.facePattern,
             transparent: true,
-            opacity: 0.8,
-            linewidth: 3
+            opacity: 0.85,
+            linewidth: 2
         });
         const line = new THREE.Line(lineGeometry, lineMaterial);
         flowerGroup.add(line);
     }
     
-    // Add secondary radiating pattern (lighter, more subtle)
+    // Secondary radiating pattern (16 finer lines)
     for (let i = 0; i < 16; i++) {
         const angle = (i / 16) * Math.PI * 2;
         const lineGeometry = new THREE.BufferGeometry().setFromPoints([
-            new THREE.Vector3(Math.cos(angle) * 0.15, -0.45 + Math.sin(angle) * 0.1, 0.07),
-            new THREE.Vector3(Math.cos(angle) * 0.4, -0.45 + Math.sin(angle) * 0.25, 0.07)
+            new THREE.Vector3(Math.cos(angle) * 0.18, -0.47 + Math.sin(angle) * 0.12, 0.075),
+            new THREE.Vector3(Math.cos(angle) * 0.45, -0.47 + Math.sin(angle) * 0.28, 0.075)
         ]);
         const lineMaterial = new THREE.LineBasicMaterial({ 
             color: colors.facePattern,
             transparent: true,
-            opacity: 0.4,
+            opacity: 0.5,
             linewidth: 1
         });
         const line = new THREE.Line(lineGeometry, lineMaterial);
